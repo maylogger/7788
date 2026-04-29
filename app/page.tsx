@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, useSpring } from "motion/react"
+import { easeIn, easeOut, motion, useSpring } from "motion/react"
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { domToPng } from "modern-screenshot"
@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table"
 
 const FORM_STORAGE_KEY = "receipt-form-state"
-const RECEIPT_MAX_TILT = 8
+const RECEIPT_MAX_TILT = 18
 
 const DEFAULT_FORM_STATE = {
   title: "付款成功",
@@ -265,81 +265,126 @@ export default function Page() {
       </aside>
 
       {/* Preview */}
-      <main className="order-1 flex flex-1 flex-col items-center gap-4 p-4 md:order-2 md:p-10">
+      <main className="order-1 flex flex-1 flex-col items-center gap-4 p-4 perspective-[1000px] transform-3d md:order-2 md:p-10">
         <motion.div
-          ref={receiptRef}
-          className="light w-full max-w-md touch-none space-y-2 border border-border/20 bg-white p-8 text-foreground shadow-lg select-none [&_tr:hover]:bg-transparent"
-          style={
-            {
-              "--background": "oklch(1 0 0)",
-              "--foreground": "oklch(0.145 0 0)",
-              "--muted": "oklch(0.97 0 0)",
-              "--muted-foreground": "oklch(0.556 0 0)",
-              "--border": "oklch(0.922 0 0)",
-              transformPerspective: 900,
-              rotateX: receiptRotateX,
-              rotateY: receiptRotateY,
-              z: receiptZ,
-              willChange: "transform",
-            } as CSSProperties
+          className="w-full max-w-md origin-top"
+          initial={{
+            scale: 0.5,
+            y: -96,
+            opacity: 0,
+            rotateX: -30,
+          }}
+          animate={
+            hasLoadedStoredForm
+              ? {
+                  scale: 1,
+                  y: 0,
+                  opacity: 1,
+                  rotateX: 0,
+                }
+              : {
+                  scale: 0.5,
+                  y: -96,
+                  opacity: 0,
+                  rotateX: -30,
+                }
           }
-          onPointerEnter={() => receiptZ.set(-10)}
-          onPointerMove={updateReceiptTilt}
-          onPointerLeave={resetReceiptTilt}
+          style={{
+            transformStyle: "preserve-3d",
+            willChange: "transform, opacity",
+          }}
+          transition={{
+            opacity: {
+              duration: 1.41,
+              ease: easeOut,
+            },
+            scale: {
+              duration: 1.41,
+              ease: [0.477, 0.015, 0.442, 0.982],
+            },
+            y: { type: "spring", stiffness: 1522.28, damping: 403.9, mass: 1 },
+            rotateX: {
+              duration: 1.41,
+              ease: easeOut,
+            },
+          }}
         >
-          {/* Title */}
-          <h1 className="text-center text-2xl font-bold">{form.title}</h1>
+          <motion.div
+            ref={receiptRef}
+            className="light w-full touch-none space-y-2 border border-border/20 bg-white p-8 text-foreground shadow-lg select-none [&_tr:hover]:bg-transparent"
+            style={
+              {
+                "--background": "oklch(1 0 0)",
+                "--foreground": "oklch(0.145 0 0)",
+                "--muted": "oklch(0.97 0 0)",
+                "--muted-foreground": "oklch(0.556 0 0)",
+                "--border": "oklch(0.922 0 0)",
+                transformPerspective: 1000,
+                rotateX: receiptRotateX,
+                rotateY: receiptRotateY,
+                z: receiptZ,
+                transformStyle: "preserve-3d",
+                willChange: "transform",
+              } as CSSProperties
+            }
+            onPointerEnter={() => receiptZ.set(-24)}
+            onPointerMove={updateReceiptTilt}
+            onPointerLeave={resetReceiptTilt}
+          >
+            {/* Title */}
+            <h1 className="text-center text-2xl font-bold">{form.title}</h1>
 
-          {/* Table 1: Order Info */}
-          <Table className="table-fixed">
-            <TableBody>
-              <TableRow>
-                <TableCell className="w-24 bg-muted/50">訂單編號</TableCell>
-                <TableCell className="whitespace-normal! break-all">
-                  {form.orderNumber || "—"}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="w-24 bg-muted/50">商店名稱</TableCell>
-                <TableCell className="whitespace-normal! break-all">
-                  {form.shopName}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="w-24 bg-muted/50">付款方式</TableCell>
-                <TableCell className="whitespace-normal! break-all">
-                  {form.paymentMethod}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+            {/* Table 1: Order Info */}
+            <Table className="table-fixed">
+              <TableBody>
+                <TableRow>
+                  <TableCell className="w-24 bg-muted/50">訂單編號</TableCell>
+                  <TableCell className="break-all whitespace-normal!">
+                    {form.orderNumber || "—"}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="w-24 bg-muted/50">商店名稱</TableCell>
+                  <TableCell className="break-all whitespace-normal!">
+                    {form.shopName}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="w-24 bg-muted/50">付款方式</TableCell>
+                  <TableCell className="break-all whitespace-normal!">
+                    {form.paymentMethod}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
 
-          {/* Table 2: Item Details */}
-          <div className="flex justify-end px-2 pt-2">
-            <span className="text-xs text-muted-foreground">{form.unit}</span>
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="bg-muted/50">商品明細</TableHead>
-                <TableHead className="bg-muted/50 text-right">小計</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>{form.itemName}</TableCell>
-                <TableCell className="text-right">{form.amount}</TableCell>
-              </TableRow>
-            </TableBody>
-            <TableFooter className="border-t-3 border-t-[oklch(0.5_0_0)] bg-transparent">
-              <TableRow>
-                <TableCell>應付金額</TableCell>
-                <TableCell className="text-right text-lg">
-                  {formatNumber(Number(form.total) || 0)}
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
+            {/* Table 2: Item Details */}
+            <div className="flex justify-end px-2 pt-2">
+              <span className="text-xs text-muted-foreground">{form.unit}</span>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="bg-muted/50">商品明細</TableHead>
+                  <TableHead className="bg-muted/50 text-right">小計</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>{form.itemName}</TableCell>
+                  <TableCell className="text-right">{form.amount}</TableCell>
+                </TableRow>
+              </TableBody>
+              <TableFooter className="border-t-3 border-t-[oklch(0.5_0_0)] bg-transparent">
+                <TableRow>
+                  <TableCell>應付金額</TableCell>
+                  <TableCell className="text-right text-lg">
+                    {formatNumber(Number(form.total) || 0)}
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </motion.div>
         </motion.div>
         <div className="flex w-full max-w-md gap-2">
           <Button variant="outline" className="flex-1" onClick={handleDownload}>
