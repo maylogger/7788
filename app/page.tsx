@@ -268,7 +268,7 @@ export default function Page() {
       <main className="order-1 flex flex-1 flex-col items-center gap-4 p-4 md:order-2 md:p-10">
         <motion.div
           ref={receiptRef}
-          className="light w-full max-w-md touch-none space-y-2 border border-border/20 bg-white p-8 text-foreground shadow-lg select-none"
+          className="light w-full max-w-md touch-none space-y-2 border border-border/20 bg-white p-8 text-foreground shadow-lg select-none [&_tr:hover]:bg-transparent"
           style={
             {
               "--background": "oklch(1 0 0)",
@@ -291,19 +291,25 @@ export default function Page() {
           <h1 className="text-center text-2xl font-bold">{form.title}</h1>
 
           {/* Table 1: Order Info */}
-          <Table>
+          <Table className="table-fixed">
             <TableBody>
               <TableRow>
-                <TableCell className="bg-muted/50">訂單編號</TableCell>
-                <TableCell>{form.orderNumber || "—"}</TableCell>
+                <TableCell className="w-24 bg-muted/50">訂單編號</TableCell>
+                <TableCell className="whitespace-normal! break-all">
+                  {form.orderNumber || "—"}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="bg-muted/50">商店名稱</TableCell>
-                <TableCell>{form.shopName}</TableCell>
+                <TableCell className="w-24 bg-muted/50">商店名稱</TableCell>
+                <TableCell className="whitespace-normal! break-all">
+                  {form.shopName}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="bg-muted/50">付款方式</TableCell>
-                <TableCell>{form.paymentMethod}</TableCell>
+                <TableCell className="w-24 bg-muted/50">付款方式</TableCell>
+                <TableCell className="whitespace-normal! break-all">
+                  {form.paymentMethod}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
