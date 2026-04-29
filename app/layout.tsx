@@ -2,12 +2,14 @@ import type { Metadata } from "next"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { SITE_URL } from "@/components/open-graph-receipt"
 
+const SITE_URL = "https://7788receipt.vercel.app/"
 const siteTitle = "7788 Receipt | 付款成功收據產生器"
 const siteDescription =
   "快速建立、調整、下載乾淨俐落的付款成功收據截圖。"
-const ogImageUrl = new URL("opengraph-image", SITE_URL).toString()
+const ogImage = new URL("og-image.png", SITE_URL)
+ogImage.searchParams.set("timestamp", Date.now().toString())
+const ogImageUrl = ogImage.toString()
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
