@@ -30,7 +30,7 @@ const DEFAULT_FORM_STATE = {
   paymentMethod: "Send Tree Pay",
   itemName: "∎∎∎∎",
   amount: "960 + 110",
-  total: "960110",
+  total: "NT$ 960,110",
   unit: "單位 Unit：新台幣 NTD",
 }
 
