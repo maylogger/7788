@@ -339,7 +339,7 @@ export default function Page() {
             onPointerLeave={resetReceiptTilt}
           >
             {/* Title */}
-            <h1 className="mb-6 text-center text-2xl font-bold">
+            <h1 className="mb-6 text-center text-2xl font-bold text-foreground">
               {form.title}
             </h1>
 
