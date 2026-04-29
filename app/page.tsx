@@ -219,7 +219,7 @@ export default function Page() {
         <Separator />
 
         <div className="space-y-1.5">
-          <Label htmlFor="unit">幣別</Label>
+          <Label htmlFor="unit">小字說明</Label>
           <Input
             id="unit"
             value={form.unit}
@@ -338,19 +338,19 @@ export default function Page() {
         <div className="flex w-full max-w-md gap-2">
           <Button variant="outline" className="flex-1" onClick={handleDownload}>
             {downloading ? (
-              <Check className="mr-2 size-4" />
+              <Check className="size-4" />
             ) : (
-              <Download className="mr-2 size-4" />
+              <Download className="size-4" />
             )}
-            {downloading ? "Downloaded!" : "Download PNG"}
+            {downloading ? "下載中..." : "下載圖片"}
           </Button>
           <Button variant="outline" className="flex-1" onClick={handleCopy}>
             {copied ? (
-              <Check className="mr-2 size-4" />
+              <Check className="size-4" />
             ) : (
-              <Copy className="mr-2 size-4" />
+              <Copy className="size-4" />
             )}
-            {copied ? "Copied!" : "Copy PNG"}
+            {copied ? "已複製！" : "複製圖片"}
           </Button>
         </div>
       </main>
