@@ -318,14 +318,14 @@ export default function Page() {
         >
           <motion.div
             ref={receiptRef}
-            className="light w-full touch-none space-y-2 border border-border/20 bg-white p-8 text-foreground shadow-lg select-none [&_tr:hover]:bg-transparent"
+            className="light w-full touch-none border border-border/20 bg-white p-8 text-muted-foreground shadow-lg select-none [&_tr:hover]:bg-transparent"
             style={
               {
                 "--background": "oklch(1 0 0)",
-                "--foreground": "oklch(0.145 0 0)",
+                "--foreground": "oklch(0.35 0 0)",
                 "--muted": "oklch(0.97 0 0)",
-                "--muted-foreground": "oklch(0.556 0 0)",
-                "--border": "oklch(0.922 0 0)",
+                "--muted-foreground": "oklch(0.45 0 0)",
+                "--border": "oklch(0.9 0 0)",
                 transformPerspective: 1000,
                 rotateX: receiptRotateX,
                 rotateY: receiptRotateY,
@@ -339,25 +339,27 @@ export default function Page() {
             onPointerLeave={resetReceiptTilt}
           >
             {/* Title */}
-            <h1 className="text-center text-2xl font-bold">{form.title}</h1>
+            <h1 className="mb-6 text-center text-2xl font-bold">
+              {form.title}
+            </h1>
 
             {/* Table 1: Order Info */}
-            <Table className="table-fixed">
+            <Table className="table-fixed border-y">
               <TableBody>
                 <TableRow>
-                  <TableCell className="w-24 bg-muted/50">訂單編號</TableCell>
+                  <TableCell className="w-28 bg-muted/50">訂單編號</TableCell>
                   <TableCell className="break-all whitespace-normal!">
                     {form.orderNumber || "—"}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="w-24 bg-muted/50">商店名稱</TableCell>
+                  <TableCell className="w-28 bg-muted/50">商店名稱</TableCell>
                   <TableCell className="break-all whitespace-normal!">
                     {form.shopName}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="w-24 bg-muted/50">付款方式</TableCell>
+                  <TableCell className="w-28 bg-muted/50">付款方式</TableCell>
                   <TableCell className="break-all whitespace-normal!">
                     {form.paymentMethod}
                   </TableCell>
@@ -366,14 +368,18 @@ export default function Page() {
             </Table>
 
             {/* Table 2: Item Details */}
-            <div className="flex justify-end px-2 pt-2">
-              <span className="text-xs text-muted-foreground">{form.unit}</span>
+            <div className="my-6 mb-1 flex justify-end px-2">
+              <span className="text-sm">{form.unit}</span>
             </div>
-            <Table>
+            <Table className="border-t">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="bg-muted/50">商品明細</TableHead>
-                  <TableHead className="bg-muted/50 text-right">小計</TableHead>
+                  <TableHead className="bg-muted/50 text-muted-foreground">
+                    商品明細
+                  </TableHead>
+                  <TableHead className="bg-muted/50 text-right text-muted-foreground">
+                    小計
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -382,11 +388,13 @@ export default function Page() {
                   <TableCell className="text-right">{form.amount}</TableCell>
                 </TableRow>
               </TableBody>
-              <TableFooter className="border-t-3 border-t-[oklch(0.5_0_0)] bg-transparent">
+              <TableFooter className="border-t-3 border-t-[oklch(0.5_0_0)] bg-transparent text-foreground">
                 <TableRow>
-                  <TableCell>應付金額</TableCell>
-                  <TableCell className="text-right text-lg">
-                    {formatNumber(Number(form.total) || 0)}
+                  <TableCell className="text-lg font-semibold">
+                    應付金額
+                  </TableCell>
+                  <TableCell className="text-right text-lg font-semibold">
+                    {form.total}
                   </TableCell>
                 </TableRow>
               </TableFooter>
