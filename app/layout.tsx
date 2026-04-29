@@ -1,13 +1,43 @@
-import { Geist_Mono } from "next/font/google"
+import type { Metadata } from "next"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { SITE_URL } from "@/components/open-graph-receipt"
 
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
+const siteTitle = "7788 Receipt | 付款成功收據產生器"
+const siteDescription =
+  "快速建立、調整、下載乾淨俐落的付款成功收據截圖。"
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: siteTitle,
+  description: siteDescription,
+  alternates: {
+    canonical: SITE_URL,
+  },
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    url: SITE_URL,
+    siteName: "7788 Receipt",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "7788 Receipt 付款成功收據產生器",
+      },
+    ],
+    locale: "zh_TW",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    images: ["/opengraph-image"],
+  },
+}
 
 export default function RootLayout({
   children,
@@ -16,9 +46,9 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="zh-Hant-TW"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable)}
+      className="antialiased"
     >
       <head>
         <link rel="preconnect" href="https://rsms.me/" />
