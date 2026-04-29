@@ -86,7 +86,7 @@
 
 @supports (font-variation-settings: normal) {
   :root {
-    font-family: InterVariable, sans-serif;
+    font-family: InterVariable, var(--font-sans), sans-serif;
   }
 }
 
