@@ -17,6 +17,7 @@
     "lucide-react": "^1.14.0",
     "modern-screenshot": "^4.7.0",
     "motion": "^12.38.0",
+    "motion-plus": "https://api.motion.dev/registry.tgz?package=motion-plus&version=2.6.1&token=72f86bb070f7c4d83fb06b831dcd21ec8448efcef917741afd65efc2e300ce0e",
     "next": "16.1.7",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",

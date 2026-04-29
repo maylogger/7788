@@ -1,6 +1,8 @@
 "use client"
 
+import { stagger } from "motion"
 import { easeOut, motion, useSpring } from "motion/react"
+import { ScrambleText } from "motion-plus/react"
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { domToPng } from "modern-screenshot"
@@ -22,19 +24,34 @@ import {
 
 const FORM_STORAGE_KEY = "receipt-form-state"
 const RECEIPT_MAX_TILT = 18
+const EMPTY_RECEIPT_TEXT = "請輸入文字"
+const EMPTY_RECEIPT_SCRAMBLE_DELAY = stagger(0.04)
 
 const DEFAULT_FORM_STATE = {
   title: "付款成功",
   orderNumber: "",
-  shopName: "∎∎∎∎",
+  shopName: "",
   paymentMethod: "Send Tree Pay",
-  itemName: "∎∎∎∎",
+  itemName: "",
   amount: "960 + 110",
   total: "NT$ 960,110",
   unit: "單位 Unit：新台幣 NTD",
 }
 
 type ReceiptFormState = typeof DEFAULT_FORM_STATE
+
+function EmptyReceiptScrambleText() {
+  return (
+    <ScrambleText
+      active
+      chars={EMPTY_RECEIPT_TEXT}
+      delay={EMPTY_RECEIPT_SCRAMBLE_DELAY}
+      duration={Infinity}
+    >
+      {EMPTY_RECEIPT_TEXT}
+    </ScrambleText>
+  )
+}
 
 function generateOrderNumber() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -355,7 +372,11 @@ export default function Page() {
                 <TableRow>
                   <TableCell className="w-28 bg-muted/50">商店名稱</TableCell>
                   <TableCell className="break-all whitespace-normal!">
-                    {form.shopName}
+                    {form.shopName.trim() === "" ? (
+                      <EmptyReceiptScrambleText />
+                    ) : (
+                      form.shopName
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -384,7 +405,13 @@ export default function Page() {
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell>{form.itemName}</TableCell>
+                  <TableCell>
+                    {form.itemName.trim() === "" ? (
+                      <EmptyReceiptScrambleText />
+                    ) : (
+                      form.itemName
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">{form.amount}</TableCell>
                 </TableRow>
               </TableBody>
