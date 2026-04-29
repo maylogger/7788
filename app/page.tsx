@@ -1,5 +1,7 @@
 "use client"
 
+import { motion, useSpring } from "motion/react"
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { domToPng } from "modern-screenshot"
 import { Button } from "@/components/ui/button"
@@ -19,6 +21,7 @@ import {
 } from "@/components/ui/table"
 
 const FORM_STORAGE_KEY = "receipt-form-state"
+const RECEIPT_MAX_TILT = 8
 
 const DEFAULT_FORM_STATE = {
   title: "付款成功",
@@ -87,6 +90,9 @@ export default function Page() {
   const [copied, setCopied] = useState(false)
   const [downloading, setDownloading] = useState(false)
   const receiptRef = useRef<HTMLDivElement>(null)
+  const receiptZ = useSpring(0, { stiffness: 200, damping: 20 })
+  const receiptRotateX = useSpring(0, { stiffness: 200, damping: 20 })
+  const receiptRotateY = useSpring(0, { stiffness: 200, damping: 20 })
 
   const updateFormField = useCallback(
     <K extends keyof ReceiptFormState>(
@@ -107,6 +113,26 @@ export default function Page() {
     if (!receiptRef.current) return null
     return domToPng(receiptRef.current, { scale: 2 })
   }, [])
+
+  const updateReceiptTilt = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (!receiptRef.current) return
+
+      const rect = receiptRef.current.getBoundingClientRect()
+      const xPercent = (event.clientX - rect.left) / rect.width
+      const yPercent = (event.clientY - rect.top) / rect.height
+
+      receiptRotateX.set(RECEIPT_MAX_TILT * (0.5 - yPercent))
+      receiptRotateY.set(RECEIPT_MAX_TILT * (xPercent - 0.5))
+    },
+    [receiptRotateX, receiptRotateY]
+  )
+
+  const resetReceiptTilt = useCallback(() => {
+    receiptRotateX.set(0)
+    receiptRotateY.set(0)
+    receiptZ.set(0)
+  }, [receiptRotateX, receiptRotateY, receiptZ])
 
   const handleDownload = useCallback(async () => {
     const dataUrl = await getReceiptPng()
@@ -240,9 +266,9 @@ export default function Page() {
 
       {/* Preview */}
       <main className="order-1 flex flex-1 flex-col items-center gap-4 p-4 md:order-2 md:p-10">
-        <div
+        <motion.div
           ref={receiptRef}
-          className="light w-full max-w-md space-y-2 border border-border/20 bg-white p-8 text-foreground shadow-lg"
+          className="light w-full max-w-md touch-none space-y-2 border border-border/20 bg-white p-8 text-foreground shadow-lg select-none"
           style={
             {
               "--background": "oklch(1 0 0)",
@@ -250,8 +276,16 @@ export default function Page() {
               "--muted": "oklch(0.97 0 0)",
               "--muted-foreground": "oklch(0.556 0 0)",
               "--border": "oklch(0.922 0 0)",
-            } as React.CSSProperties
+              transformPerspective: 900,
+              rotateX: receiptRotateX,
+              rotateY: receiptRotateY,
+              z: receiptZ,
+              willChange: "transform",
+            } as CSSProperties
           }
+          onPointerEnter={() => receiptZ.set(-10)}
+          onPointerMove={updateReceiptTilt}
+          onPointerLeave={resetReceiptTilt}
         >
           {/* Title */}
           <h1 className="text-center text-2xl font-bold">{form.title}</h1>
@@ -300,7 +334,7 @@ export default function Page() {
               </TableRow>
             </TableFooter>
           </Table>
-        </div>
+        </motion.div>
         <div className="flex w-full max-w-md gap-2">
           <Button variant="outline" className="flex-1" onClick={handleDownload}>
             {downloading ? (
