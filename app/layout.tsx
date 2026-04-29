@@ -49,8 +49,12 @@ export default function RootLayout({
   return (
     <html lang="zh-Hant-TW" suppressHydrationWarning className="antialiased">
       <head>
-        <link rel="preconnect" href="https://rsms.me/" />
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+        <link rel="preconnect" href="https://rsms.me/" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://rsms.me/inter/inter.css"
+          crossOrigin="anonymous"
+        />
       </head>
       <body>
         <ThemeProvider>{children}</ThemeProvider>

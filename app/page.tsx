@@ -1,6 +1,6 @@
 "use client"
 
-import { easeIn, easeOut, motion, useSpring } from "motion/react"
+import { easeOut, motion, useSpring } from "motion/react"
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { domToPng } from "modern-screenshot"
@@ -111,7 +111,14 @@ export default function Page() {
 
   const getReceiptPng = useCallback(async () => {
     if (!receiptRef.current) return null
-    return domToPng(receiptRef.current, { scale: 2 })
+    await document.fonts.ready
+
+    const { fontFamily } = window.getComputedStyle(receiptRef.current)
+
+    return domToPng(receiptRef.current, {
+      scale: 2,
+      style: { fontFamily },
+    })
   }, [])
 
   const updateReceiptTilt = useCallback(
