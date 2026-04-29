@@ -7,6 +7,7 @@ import { SITE_URL } from "@/components/open-graph-receipt"
 const siteTitle = "7788 Receipt | 付款成功收據產生器"
 const siteDescription =
   "快速建立、調整、下載乾淨俐落的付款成功收據截圖。"
+const ogImageUrl = new URL("opengraph-image", SITE_URL).toString()
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     siteName: "7788 Receipt",
     images: [
       {
-        url: "/opengraph-image",
+        url: ogImageUrl,
         width: 1200,
         height: 630,
         alt: "7788 Receipt 付款成功收據產生器",
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: ["/opengraph-image"],
+    images: [ogImageUrl],
   },
 }
 
