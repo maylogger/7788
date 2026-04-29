@@ -3,10 +3,9 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 
-const SITE_URL = "https://7788receipt.vercel.app/"
+const SITE_URL = "https://7788.maylogger.com/"
 const siteTitle = "7788 Receipt | 付款成功收據產生器"
-const siteDescription =
-  "快速建立、調整、下載乾淨俐落的付款成功收據截圖。"
+const siteDescription = "快速建立、調整、下載乾淨俐落的付款成功收據截圖。"
 const ogImage = new URL("og-image.png", SITE_URL)
 ogImage.searchParams.set("timestamp", Date.now().toString())
 const ogImageUrl = ogImage.toString()
@@ -48,11 +47,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="zh-Hant-TW"
-      suppressHydrationWarning
-      className="antialiased"
-    >
+    <html lang="zh-Hant-TW" suppressHydrationWarning className="antialiased">
       <head>
         <link rel="preconnect" href="https://rsms.me/" />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
