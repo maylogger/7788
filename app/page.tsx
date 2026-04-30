@@ -174,40 +174,10 @@ export default function Page() {
     if (!dataUrl) return
     const res = await fetch(dataUrl)
     const blob = await res.blob()
-
-    // 1. Try Web Share API (mobile)
-    if (typeof navigator.share === "function") {
-      try {
-        const file = new File([blob], `receipt-${form.orderNumber}.png`, { type: "image/png" })
-        if (navigator.canShare?.({ files: [file] })) {
-          await navigator.share({ files: [file] })
-          return
-        }
-      } catch {
-        // User cancelled — fall through
-      }
-    }
-
-    // 2. Try Clipboard API (desktop)
-    if (typeof ClipboardItem !== "undefined" && navigator.clipboard?.write) {
-      try {
-        await navigator.clipboard.write([
-          new ClipboardItem({ "image/png": blob })
-        ])
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-        return
-      } catch {
-        // Clipboard failed — fall through
-      }
-    }
-
-    // 3. Fallback: download
-    const link = document.createElement("a")
-    link.download = `receipt-${form.orderNumber}.png`
-    link.href = dataUrl
-    link.click()
-  }, [form.orderNumber, getReceiptPng])
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })])
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }, [getReceiptPng])
 
   return (
     <div
