@@ -169,15 +169,53 @@ export default function Page() {
     setTimeout(() => setDownloading(false), 2000)
   }, [form.orderNumber, getReceiptPng])
 
-  const handleCopy = useCallback(async () => {
-    const dataUrl = await getReceiptPng()
-    if (!dataUrl) return
-    const res = await fetch(dataUrl)
-    const blob = await res.blob()
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })])
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }, [getReceiptPng])
+  const handleCopy = useCallback(() => {
+    // iOS Safari：若在 await 截圖後才呼叫 clipboard.write，使用者啟用會過期而失敗。
+    // 改為在點擊同步呼叫 write，並用 Promise<Blob> 延後提供像素資料（符合 ClipboardItem 規格）。
+    const pngBlobPromise = (async (): Promise<Blob> => {
+      const dataUrl = await getReceiptPng()
+      if (!dataUrl) throw new Error("empty receipt")
+      const res = await fetch(dataUrl)
+      return res.blob()
+    })()
+
+    const showCopiedFeedback = () => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+
+    const tryShareFallback = async () => {
+      try {
+        const blob = await pngBlobPromise
+        const file = new File([blob], `receipt-${form.orderNumber}.png`, {
+          type: "image/png",
+        })
+        if (
+          typeof navigator.share === "function" &&
+          navigator.canShare?.({ files: [file] })
+        ) {
+          await navigator.share({
+            files: [file],
+            title: "收據圖片",
+          })
+          showCopiedFeedback()
+        }
+      } catch {
+        // 使用者取消分享不需提示
+      }
+    }
+
+    try {
+      void navigator.clipboard
+        .write([new ClipboardItem({ "image/png": pngBlobPromise })])
+        .then(showCopiedFeedback)
+        .catch(() => {
+          void tryShareFallback()
+        })
+    } catch {
+      void tryShareFallback()
+    }
+  }, [form.orderNumber, getReceiptPng])
 
   return (
     <div
